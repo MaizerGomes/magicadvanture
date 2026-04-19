@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/joho/godotenv"
 	"log"
 	"magicadventure/game"
 	"os"
@@ -13,6 +14,9 @@ import (
 )
 
 func main() {
+	// Load .env file if it exists
+	godotenv.Load()
+
 	client, err := game.InitDB()
 	if err != nil {
 		log.Fatalf("Could not connect to MongoDB: %v", err)
