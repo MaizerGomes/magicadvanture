@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Magic Adventure - Terminal RPG</title>
+    <meta name="description" content="A terminal RPG with turn-based combat, multiplayer party quests, and AI assistance. Play solo offline or with friends.">
     <link rel="icon" type="image/svg+xml" href="logo.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,13 +14,19 @@
             --bg-primary: #0a0a0f;
             --bg-secondary: #12121a;
             --bg-card: #1a1a26;
+            --bg-card-hover: #222233;
             --accent-gold: #ffd700;
             --accent-gold-dark: #cc9900;
             --accent-cyan: #00d4ff;
             --accent-purple: #7b2cbf;
+            --accent-red: #ff4757;
+            --accent-green: #2ed573;
             --text-primary: #e8e8f0;
             --text-secondary: #9090a8;
             --text-muted: #606078;
+            --font-display: 'Cinzel', serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'Fira Code', monospace;
         }
 
         * {
@@ -28,8 +35,12 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: var(--font-body);
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
@@ -72,6 +83,34 @@
             50% { transform: translate(-5%, -5%) scale(1.1); }
         }
 
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float-particle 15s infinite;
+        }
+
+        @keyframes float-particle {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
         /* Grid overlay */
         .bg-grid {
             position: fixed;
@@ -110,7 +149,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            font-family: 'Cinzel', serif;
+            font-family: var(--font-display);
             font-size: 24px;
             font-weight: 700;
             color: var(--accent-gold);
@@ -125,6 +164,7 @@
         nav {
             display: flex;
             gap: 32px;
+            align-items: center;
         }
 
         nav a {
@@ -174,12 +214,22 @@
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
         }
 
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            color: var(--accent-gold);
+        }
+
         /* Hero Section */
         .hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
             padding: 120px 0 80px;
+            position: relative;
         }
 
         .hero-content {
@@ -189,8 +239,35 @@
             align-items: center;
         }
 
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--accent-gold);
+            margin-bottom: 24px;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         .hero-text h1 {
-            font-family: 'Cinzel', serif;
+            font-family: var(--font-display);
             font-size: 56px;
             font-weight: 700;
             line-height: 1.1;
@@ -204,8 +281,15 @@
             background-clip: text;
         }
 
+        .hero-text .tagline {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+
         .hero-text p {
-            font-size: 18px;
+            font-size: 17px;
             color: var(--text-secondary);
             margin-bottom: 32px;
             max-width: 480px;
@@ -220,33 +304,19 @@
         .hero-features {
             display: flex;
             flex-wrap: wrap;
-            gap: 24px;
+            gap: 16px;
         }
 
-        .feature-item {
+        .hero-feature {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            background: var(--bg-card);
-            border-radius: 8px;
-            border: 1px solid rgba(255, 215, 0, 0.1);
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
         }
 
-        .feature-item-icon {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--accent-gold), var(--accent-cyan));
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .feature-item span {
-            font-size: 14px;
-            font-weight: 500;
+        .hero-feature-icon {
+            color: var(--accent-gold);
         }
 
         .hero-visual {
@@ -256,16 +326,20 @@
             align-items: center;
         }
 
+        .terminal-wrapper {
+            position: relative;
+        }
+
         .terminal-preview {
             width: 100%;
-            max-width: 540px;
+            max-width: 560px;
             background: var(--bg-secondary);
             border-radius: 12px;
             border: 1px solid rgba(255, 215, 0, 0.2);
             overflow: hidden;
             box-shadow: 
-                0 0 60px rgba(255, 215, 0, 0.1),
-                0 20px 60px rgba(0, 0, 0, 0.5);
+                0 0 80px rgba(255, 215, 0, 0.1),
+                0 25px 80px rgba(0, 0, 0, 0.5);
         }
 
         .terminal-header {
@@ -289,20 +363,20 @@
 
         .terminal-title {
             margin-left: 12px;
-            font-family: 'Fira Code', monospace;
+            font-family: var(--font-mono);
             font-size: 13px;
             color: var(--text-muted);
         }
 
         .terminal-body {
             padding: 20px;
-            font-family: 'Fira Code', monospace;
+            font-family: var(--font-mono);
             font-size: 13px;
-            line-height: 1.8;
+            line-height: 1.7;
         }
 
         .terminal-line {
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .terminal-prompt {
@@ -317,67 +391,211 @@
             color: var(--accent-cyan);
         }
 
-        /* Stats Section */
-        .stats {
-            padding: 80px 0;
-            border-top: 1px solid rgba(255, 215, 0, 0.1);
-            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        .terminal-health {
+            color: var(--accent-red);
         }
 
-        .stats-grid {
+        .terminal-gold {
+            color: var(--accent-gold);
+        }
+
+        /* What's Inside Section */
+        .inside {
+            padding: 100px 0;
+            background: var(--bg-secondary);
+        }
+
+        .inside-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 40px;
+            gap: 24px;
+            margin-top: 60px;
         }
 
-        .stat-item {
+        .inside-card {
+            padding: 28px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
             text-align: center;
+            transition: all 0.3s;
         }
 
-        .stat-value {
-            font-family: 'Cinzel', serif;
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--accent-gold);
-            margin-bottom: 8px;
+        .inside-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 215, 0, 0.3);
         }
 
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        /* Features Section */
-        .features {
-            padding: 100px 0;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .section-header h2 {
-            font-family: 'Cinzel', serif;
+        .inside-icon {
             font-size: 40px;
-            font-weight: 700;
             margin-bottom: 16px;
         }
 
-        .section-header p {
-            color: var(--text-secondary);
+        .inside-card h3 {
             font-size: 18px;
-            max-width: 600px;
-            margin: 0 auto;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
-        .features-grid {
+        .inside-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Locations Section */
+        .locations {
+            padding: 100px 0;
+        }
+
+        .locations-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
+            gap: 20px;
+            margin-top: 60px;
         }
 
-        .feature-card {
+        .location-card {
+            padding: 24px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .location-card:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .location-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .location-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .location-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .location-difficulty {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .difficulty-easy {
+            background: rgba(46, 213, 115, 0.2);
+            color: var(--accent-green);
+        }
+
+        .difficulty-medium {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--accent-gold);
+        }
+
+        .difficulty-hard {
+            background: rgba(255, 71, 87, 0.2);
+            color: var(--accent-red);
+        }
+
+        .difficulty-extreme {
+            background: rgba(123, 44, 191, 0.2);
+            color: var(--accent-purple);
+        }
+
+        /* Combat Preview */
+        .combat {
+            padding: 100px 0;
+            background: var(--bg-secondary);
+        }
+
+        .combat-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .combat-preview {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+
+        .combat-preview h3 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--accent-red);
+        }
+
+        .health-bar {
+            background: var(--bg-primary);
+            border-radius: 4px;
+            height: 20px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .health-bar-fill {
+            background: linear-gradient(90deg, var(--accent-red), #ff6b7a);
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .health-bar-fill.player {
+            background: linear-gradient(90deg, var(--accent-green), #5fff9b);
+        }
+
+        .health-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .combat-log {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .combat-log-line {
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .damage {
+            color: var(--accent-red);
+        }
+
+        .heal {
+            color: var(--accent-green);
+        }
+
+        .status-effect {
+            color: var(--accent-purple);
+        }
+
+        /* Party Quests */
+        .quests {
+            padding: 100px 0;
+        }
+
+        .quest-card {
             padding: 32px;
             background: var(--bg-card);
             border-radius: 12px;
@@ -385,33 +603,58 @@
             transition: all 0.3s;
         }
 
-        .feature-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(255, 215, 0, 0.3);
+        .quest-card:hover {
+            border-color: var(--accent-gold);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        .feature-card-icon {
-            width: 56px;
-            height: 56px;
+        .quest-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .quest-icon {
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(0, 212, 255, 0.2));
             border-radius: 12px;
             font-size: 24px;
-            margin-bottom: 20px;
         }
 
-        .feature-card h3 {
+        .quest-card h3 {
             font-size: 20px;
             font-weight: 600;
-            margin-bottom: 12px;
         }
 
-        .feature-card p {
-            color: var(--text-secondary);
+        .quest-card p {
             font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .quest-rewards {
+            display: flex;
+            gap: 16px;
+        }
+
+        .quest-reward {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--accent-gold);
+        }
+
+        .quests-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 60px;
         }
 
         /* Install Section */
@@ -445,7 +688,7 @@
 
         .install-code pre {
             margin: 0;
-            font-family: 'Fira Code', monospace;
+            font-family: var(--font-mono);
             font-size: 14px;
             line-height: 2;
             overflow-x: auto;
@@ -472,7 +715,7 @@
         }
 
         .install-text h2 {
-            font-family: 'Cinzel', serif;
+            font-family: var(--font-display);
             font-size: 36px;
             font-weight: 700;
             margin-bottom: 16px;
@@ -500,7 +743,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            font-family: 'Cinzel', serif;
+            font-family: var(--font-display);
             font-size: 20px;
             font-weight: 700;
             color: var(--accent-gold);
@@ -536,9 +779,30 @@
             font-size: 14px;
         }
 
+        /* Section Header */
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
         /* Responsive */
         @media (max-width: 960px) {
             .hero-content,
+            .combat-content,
             .install-content {
                 grid-template-columns: 1fr;
                 text-align: center;
@@ -560,9 +824,13 @@
                 justify-content: center;
             }
 
-            .features-grid,
-            .stats-grid {
+            .inside-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .locations-grid,
+            .quests-grid {
+                grid-template-columns: 1fr;
             }
 
             nav {
@@ -571,8 +839,7 @@
         }
 
         @media (max-width: 640px) {
-            .features-grid,
-            .stats-grid {
+            .inside-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -594,16 +861,12 @@
         .floating {
             animation: float 3s ease-in-out infinite;
         }
-
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
-            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.4); }
-        }
     </style>
 </head>
 <body>
     <div class="bg-animation"></div>
     <div class="bg-grid"></div>
+    <div class="particles" id="particles"></div>
 
     <header>
         <div class="container">
@@ -617,10 +880,10 @@
                 Magic Adventure
             </a>
             <nav>
-                <a href="#features">Features</a>
+                <a href="#inside">What's Inside</a>
+                <a href="#world">World</a>
+                <a href="#quests">Quests</a>
                 <a href="#install">Install</a>
-                <a href="https://github.com/MaizerGomes/magicadvanture/releases">Download</a>
-                <a href="https://github.com/MaizerGomes/magicadvanture">GitHub</a>
             </nav>
         </div>
     </header>
@@ -629,61 +892,59 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
+                    <div class="hero-badge">Live & Free</div>
                     <h1>A Terminal RPG<br><span>Adventure Awaits</span></h1>
-                    <p>Command-line fantasy with slot-based saves, turn-based combat, multiplayer party quests, and optional AI assistance. Play solo offline or team up with friends.</p>
+                    <p class="tagline">Slash monsters, discover loot, and forge your legend—all from the command line.</p>
+                    <p>Command-line fantasy meets modern RPG. 5 character slots, turn-based combat with status effects, party multiplayer quests, and an AI wise man to guide you. Play solo offline or team up with friends.</p>
                     <div class="hero-buttons">
                         <a href="#install" class="btn btn-primary">
                             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                            Get Started
+                            Play Now — Free
                         </a>
-                        <a href="https://github.com/MaizerGomes/magicadvanture" class="btn btn-secondary">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.475 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.795.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                            View Code
+                        <a href="#inside" class="btn btn-ghost">
+                            See What's Inside
                         </a>
                     </div>
                     <div class="hero-features">
-                        <div class="feature-item">
-                            <div class="feature-item-icon">⚔️</div>
-                            <span>Combat System</span>
+                        <div class="hero-feature">
+                            <span class="hero-feature-icon">✓</span>
+                            <span>No login required</span>
                         </div>
-                        <div class="feature-item">
-                            <div class="feature-item-icon">👥</div>
-                            <span>Multiplayer</span>
+                        <div class="hero-feature">
+                            <span class="hero-feature-icon">✓</span>
+                            <span>Works offline</span>
                         </div>
-                        <div class="feature-item">
-                            <div class="feature-item-icon">🤖</div>
-                            <span>AI Helper</span>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-item-icon">💾</div>
-                            <span>5 Save Slots</span>
+                        <div class="hero-feature">
+                            <span class="hero-feature-icon">✓</span>
+                            <span>Open source</span>
                         </div>
                     </div>
                 </div>
                 <div class="hero-visual">
-                    <div class="terminal-preview floating">
-                        <div class="terminal-header">
-                            <div class="terminal-dot red"></div>
-                            <div class="terminal-dot yellow"></div>
-                            <div class="terminal-dot green"></div>
-                            <div class="terminal-title">magicadventure</div>
-                        </div>
-                        <div class="terminal-body">
-                            <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-output">magicadventure</span></div>
-                            <div class="terminal-line"></div>
-                            <div class="terminal-line"><span class="terminal-output">┌──────────────────────────────────────┐</span></div>
-                            <div class="terminal-line"><span class="terminal-output">│</span> <span class="terminal-highlight">Magic Adventure 6.0</span> <span class="terminal-output">               │</span></div>
-                            <div class="terminal-line"><span class="terminal-output">│</span> <span class="terminal-output">Created by Dante Gomes                 │</span></div>
-                            <div class="terminal-line"><span class="terminal-output">└──────────────────────────────────────┘</span></div>
-                            <div class="terminal-line"></div>
-                            <div class="terminal-line"><span class="terminal-output">--- CHARACTER SLOTS ---</span></div>
-                            <div class="terminal-line"><span class="terminal-output">[1] Hero (Lvl 1) - village</span></div>
-                            <div class="terminal-line"><span class="terminal-output">[2] -- EMPTY SLOT --</span></div>
-                            <div class="terminal-line"><span class="terminal-output">[3] -- EMPTY SLOT --</span></div>
-                            <div class="terminal-line"><span class="terminal-output">[4] -- EMPTY SLOT --</span></div>
-                            <div class="terminal-line"><span class="terminal-output">[5] -- EMPTY SLOT --</span></div>
-                            <div class="terminal-line"></div>
-                            <div class="terminal-line"><span class="terminal-prompt">></span> <span class="terminal-cursor">_</span></div>
+                    <div class="terminal-wrapper">
+                        <div class="terminal-preview floating">
+                            <div class="terminal-header">
+                                <div class="terminal-dot red"></div>
+                                <div class="terminal-dot yellow"></div>
+                                <div class="terminal-dot green"></div>
+                                <div class="terminal-title">~ magicadventure</div>
+                            </div>
+                            <div class="terminal-body">
+                                <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-output">./magicadventure</span></div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line"><span class="terminal-output">┌──────────────────────────────────────────┐</span></div>
+                                <div class="terminal-line"><span class="terminal-output">│</span> <span class="terminal-highlight">⚔️ Magic Adventure 6.0</span> <span class="terminal-output">                 │</span></div>
+                                <div class="terminal-line"><span class="terminal-output">│</span> <span class="terminal-output">The Dragon's Peak awaits...                │</span></div>
+                                <div class="terminal-line"><span class="terminal-output">└──────────────────────────────────────────┘</span></div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line"><span class="terminal-output">--- CHARACTER SLOTS ---</span></div>
+                                <div class="terminal-line"><span class="terminal-output">[1] Valdric (Lvl 4) - forest</span> <span class="terminal-gold">💰 340</span></div>
+                                <div class="terminal-line"><span class="terminal-output">[2] -- EMPTY --</span></div>
+                                <div class="terminal-line"><span class="terminal-output">[3] -- EMPTY --</span></div>
+                                <div class="terminal-line"></div>
+                                <div class="terminal-line"><span class="terminal-output">Select a slot:</span></div>
+                                <div class="terminal-line"><span class="terminal-prompt">></span> <span class="terminal-cursor">1</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -691,80 +952,219 @@
         </div>
     </section>
 
-    <section class="stats">
+    <section id="inside" class="inside">
         <div class="container">
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-value">15+</div>
-                    <div class="stat-label">Locations to Explore</div>
+            <div class="section-header">
+                <h2>What's Inside</h2>
+                <p>Everything you need for an epic adventure</p>
+            </div>
+            <div class="inside-grid">
+                <div class="inside-card">
+                    <div class="inside-icon">⚔️</div>
+                    <h3>Combat System</h3>
+                    <p>Turn-based battles with health bars, status effects (freeze, poison, burn, stun), damage calculation & coordinated party strikes.</p>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">4</div>
-                    <div class="stat-label">Party Quests</div>
+                <div class="inside-card">
+                    <div class="inside-icon">💰</div>
+                    <h3>Loot & Gold</h3>
+                    <p>Collect gold, find equipment, discover relics. Steel Sword, Forsaken Blade, and more legendary items await.</p>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">100%</div>
-                    <div class="stat-label">Offline Play</div>
+                <div class="inside-card">
+                    <div class="inside-icon">📈</div>
+                    <h3>Level Up</h3>
+                    <p>Earn XP, level up, unlock skill points. Each level grants stat boosts and new abilities.</p>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">Open</div>
-                    <div class="stat-label">Source</div>
+                <div class="inside-card">
+                    <div class="inside-icon">👥</div>
+                    <h3>Party Multiplayer</h3>
+                    <p>Team up with friends. Join rooms, chat, send whispers, invite to parties.</p>
+                </div>
+                <div class="inside-card">
+                    <div class="inside-icon">🏆</div>
+                    <h3>Party Quests</h3>
+                    <p>Monster Hunt, Void Expedition, Frost Pact, Sun Covenant. Multi-phase dungeons with coordinated strategies.</p>
+                </div>
+                <div class="inside-card">
+                    <div class="inside-icon">🤖</div>
+                    <h3>AI Wise Man</h3>
+                    <p>In-game AI helper powered by Gemini or Cloudflare. Get hints, lore, and guidance without leaving.</p>
+                </div>
+                <div class="inside-card">
+                    <div class="inside-icon">💾</div>
+                    <h3>5 Save Slots</h3>
+                    <p>Separate characters. Try different builds, share with friends, or restart fresh.</p>
+                </div>
+                <div class="inside-card">
+                    <div class="inside-icon">🌍</div>
+                    <h3>Open World</h3>
+                    <p>15+ locations. Villages, forests, deserts, arctic, glitch zones. Your choices shape the journey.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="features" class="features">
+    <section id="world" class="locations">
         <div class="container">
             <div class="section-header">
-                <h2>Game Features</h2>
-                <p>Everything you need for an epic text adventure experience</p>
+                <h2>Explore the World</h2>
+                <p>From peaceful villages to the Dragon's Peak—discover 15+ unique locations</p>
             </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-card-icon">🎮</div>
-                    <h3>5 Character Slots</h3>
-                    <p>Create multiple heroes with different builds. Perfect for trying new strategies or sharing with friends.</p>
+            <div class="locations-grid">
+                <div class="location-card">
+                    <div class="location-icon">🏠</div>
+                    <h3>The Village</h3>
+                    <p>Your starting point. Visit the tavern, shops, and gather information.</p>
+                    <span class="location-difficulty difficulty-easy">Beginner</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-card-icon">⚔️</div>
-                    <h3>Turn-Based Combat</h3>
-                    <p>Strategic battles with health bars, damage calculations, status effects, and coordinated party strikes.</p>
+                <div class="location-card">
+                    <div class="location-icon">🌲</div>
+                    <h3>The Forest</h3>
+                    <p>Gather resources, fight goblins and wolves. Find the hidden ruins.</p>
+                    <span class="location-difficulty difficulty-easy">Easy</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-card-icon">🗺️</div>
-                    <h3>Open World</h3>
-                    <p>Explore villages, forests, deserts, arctic tundras, glitch zones, and more. Your choices shape the story.</p>
+                <div class="location-card">
+                    <div class="location-icon">🌊</div>
+                    <h3>The River</h3>
+                    <p>Water-based puzzles and aquatic enemies. Access the harbor.</p>
+                    <span class="location-difficulty difficulty-medium">Medium</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-card-icon">👥</div>
-                    <h3>Party Multiplayer</h3>
-                    <p>Team up with friends for Monster Hunt, Void Expedition, Frost Pact, and Sun Covenant quests.</p>
+                <div class="location-card">
+                    <div class="location-icon">🏰</div>
+                    <h3>The Lighthouse</h3>
+                    <p>Mid-game challenge. Battle through tide caves to reach the beacon.</p>
+                    <span class="location-difficulty difficulty-medium">Medium</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-card-icon">🗣️</div>
-                    <h3>Chat & Social</h3>
-                    <p>Room chat, whispers, party invites, and notifications. Stay connected while you play.</p>
+                <div class="location-card">
+                    <div class="location-icon">🌙</div>
+                    <h3>Moonwell</h3>
+                    <p>Magical springs and ancient lore. Find the legendary Moon Charm.</p>
+                    <span class="location-difficulty difficulty-medium">Medium</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-card-icon">🤖</div>
-                    <h3>AI Wise Man</h3>
-                    <p>Get contextual hints and lore from Gemini or Cloudflare AI. Your personal adventure guide.</p>
+                <div class="location-card">
+                    <div class="location-icon">🏜️</div>
+                    <h3>The Desert</h3>
+                    <p>Survive the heat and solve the Sphinx's riddle. Find the Sun Amulet.</p>
+                    <span class="location-difficulty difficulty-hard">Hard</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-card-icon">💾</div>
-                    <h3>Local Saves</h3>
-                    <p>SQLite persistence keeps your progress safe. Works fully offline without any cloud dependencies.</p>
+                <div class="location-card">
+                    <div class="location-icon">❄️</div>
+                    <h3>The Arctic</h3>
+                    <p>Frost giants and ice caves. Challenge the Great White Wyrm.</p>
+                    <span class="location-difficulty difficulty-hard">Hard</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-card-icon">📈</div>
-                    <h3>Progressive Leveling</h3>
-                    <p>Earn XP, gold, and skill points. Unlock new abilities and equipment as you grow stronger.</p>
+                <div class="location-card">
+                    <div class="location-icon">👺</div>
+                    <h3>The Binary Sea</h3>
+                    <p>A glitch in reality. Face 1x1x1x1—a corrupted data entity.</p>
+                    <span class="location-difficulty difficulty-extreme">Extreme</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-card-icon">🏆</div>
-                    <h3>Side Quests</h3>
-                    <p>Collect the Ruins Token, Moon Charm, and Star Map for the legendary Triptych Blessing.</p>
+                <div class="location-card">
+                    <div class="location-icon">🐉</div>
+                    <h3>Dragon's Peak</h3>
+                    <p>The final challenge. Slay the Great Wyrm and become a legend.</p>
+                    <span class="location-difficulty difficulty-extreme">End Game</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="combat">
+        <div class="container">
+            <div class="combat-content">
+                <div>
+                    <h2 style="font-family: var(--font-display); font-size: 36px; margin-bottom: 16px;">Turn-Based Combat</h2>
+                    <p style="color: var(--text-secondary); font-size: 17px; margin-bottom: 32px;">Strategic battles with visible health bars, damage calculations, and status effects. Freeze enemies, poison them, burn for damage-over-time, or stun for tactical advantage. Party members can coordinate strikes for massive damage.</p>
+                    <ul style="color: var(--text-secondary); list-style: none;">
+                        <li style="margin-bottom: 12px;">✓ <strong style="color: var(--text-primary);">Health Bars</strong> — See enemy HP in real-time</li>
+                        <li style="margin-bottom: 12px;">✓ <strong style="color: var(--text-primary);">Status Effects</strong> — Freeze, Poison, Burn, Stun</li>
+                        <li style="margin-bottom: 12px;">✓ <strong style="color: var(--text-primary);">Coordinated Strikes</strong> — Party attacks deal bonus damage</li>
+                        <li style="margin-bottom: 12px;">✓ <strong style="color: var(--text-primary);">Loot Drops</strong> — Gold, XP, and equipment</li>
+                    </ul>
+                </div>
+                <div class="combat-preview">
+                    <h3>⚔️ Combat Encounter</h3>
+                    <div class="health-label">
+                        <span>Frost Giant</span>
+                        <span class="health-bar-fill" style="width: 60%; display: block;">108 / 180</span>
+                    </div>
+                    <div class="health-bar">
+                        <div class="health-bar-fill" style="width: 60%;"></div>
+                    </div>
+                    <div class="health-label">
+                        <span>You (Valdric)</span>
+                        <span>85 / 100</span>
+                    </div>
+                    <div class="health-bar">
+                        <div class="health-bar-fill player" style="width: 85%;"></div>
+                    </div>
+                    <div class="combat-log">
+                        <div class="combat-log-line"><span class="terminal-prompt">></span> <span class="damage">You strike for 32 damage!</span></div>
+                        <div class="combat-log-line"><span class="terminal-output">Frost Giant hits you for 15 damage!</span></div>
+                        <div class="combat-log-line"><span class="status-effect">You areFrozen for 1 turn!</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quests" class="quests">
+        <div class="container">
+            <div class="section-header">
+                <h2>Party Quests</h2>
+                <p>Team up with friends for epic multi-phase dungeon adventures</p>
+            </div>
+            <div class="quests-grid">
+                <div class="quest-card">
+                    <div class="quest-header">
+                        <div class="quest-icon">👹</div>
+                        <div>
+                            <h3>Monster Hunt</h3>
+                        </div>
+                    </div>
+                    <p>Track the beast lord through its lair. Clear outer sentries, purge the depths, face the alpha.</p>
+                    <div class="quest-rewards">
+                        <div class="quest-reward">🎯 180 XP</div>
+                        <div class="quest-reward">💰 180 Gold</div>
+                    </div>
+                </div>
+                <div class="quest-card">
+                    <div class="quest-header">
+                        <div class="quest-icon">🌌</div>
+                        <div>
+                            <h3>Void Expedition</h3>
+                        </div>
+                    </div>
+                    <p>Explore a fractured reality. Stabilize the entry, descend into shards, seal the void core.</p>
+                    <div class="quest-rewards">
+                        <div class="quest-reward">🎯 220 XP</div>
+                        <div class="quest-reward">💰 220 Gold</div>
+                    </div>
+                </div>
+                <div class="quest-card">
+                    <div class="quest-header">
+                        <div class="quest-icon">❄️</div>
+                        <div>
+                            <h3>Frost Pact</h3>
+                        </div>
+                    </div>
+                    <p>Challenge the Frost Wyrm. Shatter glacier wards, climb the peak, slay the ancient dragon.</p>
+                    <div class="quest-rewards">
+                        <div class="quest-reward">🎯 200 XP</div>
+                        <div class="quest-reward">💰 200 Gold</div>
+                    </div>
+                </div>
+                <div class="quest-card">
+                    <div class="quest-header">
+                        <div class="quest-icon">☀️</div>
+                        <div>
+                            <h3>Sun Covenant</h3>
+                        </div>
+                    </div>
+                    <p>Ignite the dawn temple. Break through burning dunes, face the Sunbound Colossus.</p>
+                    <div class="quest-rewards">
+                        <div class="quest-reward">🎯 240 XP</div>
+                        <div class="quest-reward">💰 240 Gold</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -774,8 +1174,8 @@
         <div class="container">
             <div class="install-content">
                 <div class="install-text">
-                    <h2>Ready to Begin Your Adventure?</h2>
-                    <p>Install in seconds with Homebrew, or download a binary directly. Works on macOS, Linux, and Windows.</p>
+                    <h2>Start Playing — Free</h2>
+                    <p>Install in seconds with Homebrew, or download a binary directly. Works on macOS, Linux, and Windows. No account needed, no microtransactions.</p>
                     <a href="https://github.com/MaizerGomes/magicadvanture/releases" class="btn btn-primary">
                         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0l-12 12h8v12h8v-12h8z"/></svg>
                         Download Latest Release
@@ -783,16 +1183,16 @@
                 </div>
                 <div class="install-code">
                     <div class="code-header">
-                        <span>Install Commands</span>
+                        <span>Install via Homebrew</span>
                     </div>
-                    <pre><code><span class="comment"># macOS / Linux (Homebrew)</span>
+                    <pre><code><span class="comment"># macOS / Linux</span>
 <span class="keyword">brew</span> tap MaizerGomes/magicadvanture
 <span class="keyword">brew</span> install magicadventure
 
-<span class="comment"># Or run directly</span>
+<span class="comment"># Or run from source</span>
 <span class="function">go</span> run .
 
-<span class="comment"># Build from source</span>
+<span class="comment"># Build from git</span>
 <span class="keyword">git</span> clone https://github.com/MaizerGomes/magicadvanture
 <span class="function">cd</span> magicadventure
 <span class="function">go</span> build -o magicadventure .</code></pre>
@@ -820,12 +1220,23 @@
                 </div>
             </div>
             <div class="footer-copyright">
-                Created by Dante Gomes with assistance from Gemini and Codex
+                Built with 💛 by Dante Gomes
             </div>
         </div>
     </footer>
 
     <script>
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
         // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -837,23 +1248,6 @@
                     });
                 }
             });
-        });
-
-        // Add fade-in animation on scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        });
-
-        document.querySelectorAll('.feature-card, .stat-item').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'all 0.6s ease-out';
-            observer.observe(el);
         });
     </script>
 </body>
