@@ -1,0 +1,70 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+
+      - name: Build for macOS ARM
+        run: |
+          go build -o magicadventure-mac-arm .
+          shasum -a256 magicadventure-mac-arm > checksums.txt
+
+      - name: Build for macOS Intel
+        run: |
+          GOOS=darwin GOARCH=amd64 go build -o magicadventure-mac-64 .
+          shasum -a256 magicadventure-mac-64 >> checksums.txt
+
+      - name: Build for Linux
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o magicadventure-linux64 .
+          shasum -a256 magicadventure-linux64 >> checksums.txt
+
+      - name: Build for Windows
+        run: |
+          GOOS=windows GOARCH=amd64 go build -o magicadventure-windows.exe .
+          shasum -a256 magicadventure-windows.exe >> checksums.txt
+
+      - name: Upload macOS ARM
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            magicadventure-mac-arm
+            checksums.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload macOS Intel
+        uses: softprops/action-gh-release@v2
+        with:
+          files: magicadventure-mac-64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Linux
+        uses: softprops/action-gh-release@v2
+        with:
+          files: magicadventure-linux64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Windows
+        uses: softprops/action-gh-release@v2
+        with:
+          files: magicadventure-windows.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
