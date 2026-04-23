@@ -1,62 +1,133 @@
-# Magic Adventure
+# <img src="logo.svg" width="48"> Magic Adventure
 
-Magic Adventure is a terminal RPG built in Go. It combines slot-based saves, a branching world, turn-style combat, local sqlite persistence, and optional Mongo-backed multiplayer.
-Created by Dante Gomes with assistance from Gemini and Codex.
+A terminal RPG built in Go that blends classic text adventure mechanics with modern features. Play solo offline or join friends in shared party quests.
 
-## What It Does Well
+[![Release](https://img.shields.io/github/v/release/MaizerGomes/magicadvanture)](https://github.com/MaizerGomes/magicadvanture/releases)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-blue)](https://github.com/MaizerGomes/magicadvanture/releases)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-- Five character slots
-- Auto-created sqlite save database on first run for offline progress
-- Optional Mongo-backed multiplayer when `MONGO_URI` is available
-- Open-world progression across village, forest, river, harbor, lighthouse, tide caves, old ruins, moonwell, observatory, desert, arctic, sage hut, and glitch zones
-- Boss fights with visible health bars
-- Tutorial flow for new players
+---
 
-## Install
+## Features
 
-### Homebrew (macOS/Linux)
+### Core Gameplay
+- **5 Character Slots** — Save progress in separate slots, perfect for trying different builds
+- **Open World** — Explore 15+ unique locations: village, forest, river, harbor, lighthouse, tide caves, old ruins, moonwell, observatory, desert, arctic, sage hut, glitch zones, and more
+- **Turn-Based Combat** — Strategic battles with health bars, damage calculation, and combat status effects
+- **Progressive Leveling** — Earn XP, gold, and skill points to strengthen your hero
+
+### Online & Multiplayer
+- **Party Quests** — Team up with friends for Monster Hunt, Void Expedition, Frost Pact, and Sun Covenant
+- **Dungeon Phases** — Multi-stage party dungeons with coordinated strikes
+- **Chat & Social** — Room chat, whispers, party invites, and notifications
+- **MongoDB Backend** — Optional online persistence when `MONGO_URI` is configured
+
+### AI Assistant
+- **Wise Man** — In-game AI helper with Gemini or Cloudflare integration
+- **Contextual Guidance** — Get hints and lore without leaving the game
+
+---
+
+## Quick Install
 
 ```bash
+# macOS / Linux (Homebrew)
 brew tap MaizerGomes/magicadvanture
 brew install magicadventure
+
+# Windows
+winget install MaizerGomes.magicadventre
 ```
 
-### Direct Download
+Or [download a binary](https://github.com/MaizerGomes/magicadvanture/releases) directly.
 
-See the [Releases](https://github.com/MaizerGomes/magicadvanture/releases) page for binaries.
+---
 
 ## Run It
 
 ```bash
+# From source
 go run .
+
+# Or run the installed binary
+magicadventure
 ```
 
-The first run creates `magicadventure.db` in the project directory unless `MAGIC_ADVENTURE_DB_PATH` is set.
-If `MONGO_URI` is set and reachable, the game also enables online presence, room chat, whispers, room events, party invites, party following, party healing, party rally buffs, party guards, party quests, party quest logs, party dungeon phases, quest cooldowns, relic trading, and a persistent notifications inbox. The wise man is configured separately inside the game and can use Gemini or Cloudflare as an optional online assistant. The current party quest lines are Monster Hunt, Void Expedition, Frost Pact, and Sun Covenant. A separate side quest lets you collect the Ruins Token, Moon Charm, and Star Map from new locations and turn them in at the sage hut for the Triptych Blessing. Quest relics also provide thematic combat bonuses in their matching zones. If Mongo is unavailable, the game stays fully playable offline.
+First run creates `magicadventure.db` locally. Configure via environment or `.env` file.
+
+---
 
 ## Configuration
 
-- `MAGIC_ADVENTURE_DB_PATH`: Optional path to the sqlite database file
-- `MONGO_URI`: Optional MongoDB connection string for online multiplayer
-- `MONGO_DB_NAME`: Optional Mongo database name, defaults to `magicadventure_online`
-- `WISEMAN_AI_PROVIDER`: Optional bootstrap provider for the wise man: `gemini`, `cloudflare`, or `legacy`
-- `WISEMAN_AI_KEY`: Optional bootstrap API key for the wise man
-- `WISEMAN_AI_MODEL`: Optional bootstrap model name
-- `WISEMAN_AI_ACCOUNT_ID`: Optional bootstrap Cloudflare account ID
-- `WISEMAN_AI_URL`: Optional legacy chat-completions endpoint if you still want to use the old OpenAI-compatible flow
-- `.env`: Loaded automatically if present
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MAGIC_ADVENTURE_DB_PATH` | Path to sqlite database | `./magicadventure.db` |
+| `MONGO_URI` | MongoDB connection for online features | (offline mode) |
+| `MONGO_DB_NAME` | Mongo database name | `magicadventure_online` |
+| `WISEMAN_AI_PROVIDER` | AI provider: `gemini`, `cloudflare`, `legacy` | - |
+| `WISEMAN_AI_KEY` | API key for the wise man | - |
 
-The recommended setup flow is in-game: at startup, the game can open the provider page in your browser, wait for you to paste the key, and save the wise man settings in sqlite. You can change the provider or key later from the Settings menu.
-
-## Build
+Create a `.env` file in the project root:
 
 ```bash
-go build -o adventure .
+MONGO_URI=mongodb://localhost:27017
+WISEMAN_AI_PROVIDER=gemini
+WISEMAN_AI_KEY=your-api-key-here
 ```
 
-## Notes
+---
 
-- Save data is always local by default.
-- Online features are best effort and never block offline play.
-- The sqlite database file and release binaries are ignored by git.
-- See `TUTORIAL.md` for the game rules and progression notes.
+## Build from Source
+
+```bash
+# Clone and build
+git clone https://github.com/MaizerGomes/magicadvanture.git
+cd magicadvanture
+go build -o magicadventure .
+
+# Cross-compile
+GOOS=darwin GOARCH=arm64 go build -o magicadventure-mac-arm .
+GOOS=darwin GOARCH=amd64 go build -o magicadventure-mac-64 .
+GOOS=linux GOARCH=amd64 go build -o magicadventure-linux64 .
+GOOS=windows GOARCH=amd64 go build -o magicadventure.exe .
+```
+
+---
+
+## Game Guide
+
+### Progression
+1. **Village** — Start your journey, visit the tavern and shops
+2. **Forest** — Gather resources, fight initial enemies
+3. **River & Harbor** — Access water-based content and trading
+4. **Lighthouse & Tide Caves** —Mid-game challenges
+5. **Moonwell & Observatory** — Magic and star lore
+6. **Desert & Arctic** — End-game biomes with unique rewards
+7. **Dragon's Peak** — Final boss encounter
+
+### Side Quests
+- **Triptych Blessing** — Collect the Ruins Token, Moon Charm, and Star Map
+- **Sage Hut** — Turn in collected items for bonuses
+
+### Tips
+- Save often (the game auto-saves after each room)
+- Party quests scale with group size
+- Check the Settings menu to configure the wise man
+
+---
+
+## Contributing
+
+Contributions welcome! Open an issue or submit a PR.
+
+---
+
+## License
+
+MIT — See [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">
+  <sub>Created by Dante Gomes with assistance from Gemini and Codex</sub>
+</p>

@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Adventure - Terminal RPG</title>
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a26;
+            --accent-gold: #ffd700;
+            --accent-gold-dark: #cc9900;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #7b2cbf;
+            --text-primary: #e8e8f0;
+            --text-secondary: #9090a8;
+            --text-muted: #606078;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(123, 44, 191, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
+            animation: bgPulse 20s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-5%, -5%) scale(1.1); }
+        }
+
+        /* Grid overlay */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(255, 215, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 215, 0, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 0;
+            background: linear-gradient(to bottom, rgba(10, 10, 15, 0.95), transparent);
+            backdrop-filter: blur(10px);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        nav {
+            display: flex;
+            gap: 32px;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent-gold);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 0 80px;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+        .hero-text h1 span {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 480px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .hero-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .feature-item-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-cyan));
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .feature-item span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .terminal-preview {
+            width: 100%;
+            max-width: 540px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            overflow: hidden;
+            box-shadow: 
+                0 0 60px rgba(255, 215, 0, 0.1),
+                0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ff5f57; }
+        .terminal-dot.yellow { background: #ffbd2e; }
+        .terminal-dot.green { background: #28c840; }
+
+        .terminal-title {
+            margin-left: 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .terminal-body {
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .terminal-line {
+            margin-bottom: 4px;
+        }
+
+        .terminal-prompt {
+            color: var(--accent-gold);
+        }
+
+        .terminal-output {
+            color: var(--text-secondary);
+        }
+
+        .terminal-highlight {
+            color: var(--accent-cyan);
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 80px 0;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Cinzel', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card {
+            padding: 32px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card-icon {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(0, 212, 255, 0.2));
+            border-radius: 12px;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        /* Install Section */
+        .install {
+            padding: 100px 0;
+            background: var(--bg-secondary);
+        }
+
+        .install-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .install-code {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .install-code pre {
+            margin: 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 2;
+            overflow-x: auto;
+        }
+
+        .install-code code {
+            color: var(--text-primary);
+        }
+
+        .install-code .comment {
+            color: var(--text-muted);
+        }
+
+        .install-code .keyword {
+            color: var(--accent-purple);
+        }
+
+        .install-code .string {
+            color: var(--accent-gold);
+        }
+
+        .install-code .function {
+            color: var(--accent-cyan);
+        }
+
+        .install-text h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .install-text p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 0 40px;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .footer-logo svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-gold);
+        }
+
+        .footer-copyright {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 960px) {
+            .hero-content,
+            .install-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 40px;
+            }
+
+            .hero-text p {
+                margin: 0 auto 32px;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-features {
+                justify-content: center;
+            }
+
+            .features-grid,
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            nav {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .features-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-text h1 {
+                font-size: 32px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.4); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="bg-grid"></div>
+
+    <header>
+        <div class="container">
+            <a href="#" class="logo">
+                <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="512" height="512" rx="64" fill="#1a1a2e"/>
+                    <circle cx="256" cy="180" r="25" fill="#ffd700"/>
+                    <path d="M180 280 Q256 240 332 280 L300 380 Q256 420 212 380 Z" fill="#2d2d44" stroke="#ffd700" stroke-width="4"/>
+                    <path d="M220 340 L256 320 L292 340 L256 380 Z" fill="#ffd700" opacity="0.8"/>
+                </svg>
+                Magic Adventure
+            </a>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="#install">Install</a>
+                <a href="https://github.com/MaizerGomes/magicadvanture/releases">Download</a>
+                <a href="https://github.com/MaizerGomes/magicadvanture">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>A Terminal RPG<br><span>Adventure Awaits</span></h1>
+                    <p>Command-line fantasy with slot-based saves, turn-based combat, multiplayer party quests, and optional AI assistance. Play solo offline or team up with friends.</p>
+                    <div class="hero-buttons">
+                        <a href="#install" class="btn btn-primary">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                            Get Started
+                        </a>
+                        <a href="https://github.com/MaizerGomes/magicadvanture" class="btn btn-secondary">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.475 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.795.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            View Code
+                        </a>
+                    </div>
+                    <div class="hero-features">
+                        <div class="feature-item">
+                            <div class="feature-item-icon">⚔️</div>
+                            <span>Combat System</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-item-icon">👥</div>
+                            <span>Multiplayer</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-item-icon">🤖</div>
+                            <span>AI Helper</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-item-icon">💾</div>
+                            <span>5 Save Slots</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="terminal-preview floating">
+                        <div class="terminal-header">
+                            <div class="terminal-dot red"></div>
+                            <div class="terminal-dot yellow"></div>
+                            <div class="terminal-dot green"></div>
+                            <div class="terminal-title">magicadventure</div>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-output">magicadventure</span></div>
+                            <div class="terminal-line"></div>
+                            <div class="terminal-line"><span class="terminal-output">┌──────────────────────────────────────┐</span></div>
+                            <div class="terminal-line"><span class="terminal-output">│</span> <span class="terminal-highlight">Magic Adventure 6.0</span> <span class="terminal-output">               │</span></div>
+                            <div class="terminal-line"><span class="terminal-output">│</span> <span class="terminal-output">Created by Dante Gomes                 │</span></div>
+                            <div class="terminal-line"><span class="terminal-output">└──────────────────────────────────────┘</span></div>
+                            <div class="terminal-line"></div>
+                            <div class="terminal-line"><span class="terminal-output">--- CHARACTER SLOTS ---</span></div>
+                            <div class="terminal-line"><span class="terminal-output">[1] Hero (Lvl 1) - village</span></div>
+                            <div class="terminal-line"><span class="terminal-output">[2] -- EMPTY SLOT --</span></div>
+                            <div class="terminal-line"><span class="terminal-output">[3] -- EMPTY SLOT --</span></div>
+                            <div class="terminal-line"><span class="terminal-output">[4] -- EMPTY SLOT --</span></div>
+                            <div class="terminal-line"><span class="terminal-output">[5] -- EMPTY SLOT --</span></div>
+                            <div class="terminal-line"></div>
+                            <div class="terminal-line"><span class="terminal-prompt">></span> <span class="terminal-cursor">_</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">15+</div>
+                    <div class="stat-label">Locations to Explore</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">Party Quests</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Offline Play</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">Open</div>
+                    <div class="stat-label">Source</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Game Features</h2>
+                <p>Everything you need for an epic text adventure experience</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">🎮</div>
+                    <h3>5 Character Slots</h3>
+                    <p>Create multiple heroes with different builds. Perfect for trying new strategies or sharing with friends.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">⚔️</div>
+                    <h3>Turn-Based Combat</h3>
+                    <p>Strategic battles with health bars, damage calculations, status effects, and coordinated party strikes.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🗺️</div>
+                    <h3>Open World</h3>
+                    <p>Explore villages, forests, deserts, arctic tundras, glitch zones, and more. Your choices shape the story.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">👥</div>
+                    <h3>Party Multiplayer</h3>
+                    <p>Team up with friends for Monster Hunt, Void Expedition, Frost Pact, and Sun Covenant quests.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🗣️</div>
+                    <h3>Chat & Social</h3>
+                    <p>Room chat, whispers, party invites, and notifications. Stay connected while you play.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🤖</div>
+                    <h3>AI Wise Man</h3>
+                    <p>Get contextual hints and lore from Gemini or Cloudflare AI. Your personal adventure guide.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">💾</div>
+                    <h3>Local Saves</h3>
+                    <p>SQLite persistence keeps your progress safe. Works fully offline without any cloud dependencies.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📈</div>
+                    <h3>Progressive Leveling</h3>
+                    <p>Earn XP, gold, and skill points. Unlock new abilities and equipment as you grow stronger.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🏆</div>
+                    <h3>Side Quests</h3>
+                    <p>Collect the Ruins Token, Moon Charm, and Star Map for the legendary Triptych Blessing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="install" class="install">
+        <div class="container">
+            <div class="install-content">
+                <div class="install-text">
+                    <h2>Ready to Begin Your Adventure?</h2>
+                    <p>Install in seconds with Homebrew, or download a binary directly. Works on macOS, Linux, and Windows.</p>
+                    <a href="https://github.com/MaizerGomes/magicadvanture/releases" class="btn btn-primary">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0l-12 12h8v12h8v-12h8z"/></svg>
+                        Download Latest Release
+                    </a>
+                </div>
+                <div class="install-code">
+                    <div class="code-header">
+                        <span>Install Commands</span>
+                    </div>
+                    <pre><code><span class="comment"># macOS / Linux (Homebrew)</span>
+<span class="keyword">brew</span> tap MaizerGomes/magicadvanture
+<span class="keyword">brew</span> install magicadventure
+
+<span class="comment"># Or run directly</span>
+<span class="function">go</span> run .
+
+<span class="comment"># Build from source</span>
+<span class="keyword">git</span> clone https://github.com/MaizerGomes/magicadvanture
+<span class="function">cd</span> magicadventure
+<span class="function">go</span> build -o magicadventure .</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="512" height="512" rx="64" fill="#1a1a2e"/>
+                        <circle cx="256" cy="180" r="25" fill="#ffd700"/>
+                        <path d="M180 280 Q256 240 332 280 L300 380 Q256 420 212 380 Z" fill="#2d2d44" stroke="#ffd700" stroke-width="4"/>
+                        <path d="M220 340 L256 320 L292 340 L256 380 Z" fill="#ffd700" opacity="0.8"/>
+                    </svg>
+                    Magic Adventure
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/MaizerGomes/magicadvanture">GitHub</a>
+                    <a href="https://github.com/MaizerGomes/magicadvanture/releases">Releases</a>
+                    <a href="https://github.com/MaizerGomes/magicadvanture/issues">Issues</a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                Created by Dante Gomes with assistance from Gemini and Codex
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add fade-in animation on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        document.querySelectorAll('.feature-card, .stat-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
