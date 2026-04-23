@@ -1,17 +1,9 @@
-# Binaries
-adventure
-adventure.exe
+/.env
+magicadventure.db
+*.db
+*.sqlite
+*.sqlite3
 magicadventure
-magicadventure.exe
-
-# OS files
-.DS_Store
-
-# Local database (legacy)
-adventure.db
-
-# Environment variables
-.env
-
-# Go workspace
-go.work
+adventure
+magicadventure-*
+*.exe

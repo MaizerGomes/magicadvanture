@@ -1,49 +1,69 @@
-# 📖 Magic Adventure 6.0: The XP & Balance Update
+# Magic Adventure Tutorial
 
-Welcome to the ultimate RPG refinement! This guide covers the new leveling mechanics, visual combat improvements, and the expanded world.
+Created by Dante Gomes with assistance from Gemini and Codex.
 
----
+This guide explains the core loop, progression, and the main systems that matter while playing.
 
-## 1. 📈 Experience & Leveling (NEW)
-You now earn **Experience Points (XP)** for every victory!
-- **XP Bar**: Check your progress directly under your health bar.
-- **Leveling Up**: When your XP fills the bar, you'll level up automatically.
-- **Stats Boost**: Each level grants you:
-  - **+25 Max Health** (and full heal!)
-  - **+5 Base Damage** (permanent attack boost).
-- **Difficulty**: Every level requires more XP than the last.
+## 0. Storage Model
 
-## 2. 🛡️ Visual Combat: Health Bars
-All enemies now have **visible health bars** during combat.
-- Track exactly how much HP a boss or monster has left.
-- Plan your attacks and healing more strategically.
+- sqlite stores local save data, offline relic inventory, and other state the game needs to run without internet.
+- Mongo stores the optional multiplayer layer: player presence, room chat, whispers, room events, party invitations, party follow/join actions, party heals, party rally buffs, party guards, party quests, party quest logs, party dungeon phases, quest cooldowns, and relic trading.
+- Wise man AI settings are stored locally in sqlite after you configure them in-game. The setup flow can open the provider page in your browser, then wait for you to paste the key in the terminal.
+- If Mongo is unreachable, the game automatically falls back to offline mode.
 
-## 3. 🐘 The Zoo: Fixed & Defeatable
-The Zoo Beast has been completely refactored.
-- **Multiple Turns**: You can now attack the beast over multiple turns. It will track its health correctly.
-- **Strategy**: You'll need at least **Level 2** and a **Steel Sword** to survive its high health (120 HP).
-- **Reward**: Slaying it grants **150 XP** and **200 Gold**.
+## 1. Start
 
-## 4. ❄️ Expanded Arctic Journey
-The Arctic is no longer a straight path to the portal.
-- **Arctic Entrance**: The starting point.
-- **Frost Cliffs (North)**: Home to the **Frost Giant**.
-- **Ice Bridge (East)**: The path to the **Forsaken Portal**.
-- **New Challenges**: You must navigate these intermediate rooms to find the boss or the portal.
+- Launch the game.
+- Pick one of the five save slots.
+- If a slot already exists, continue it or overwrite it.
+- On first run, the sqlite database is created automatically.
 
-## 5. 🏥 The Village Shop: New Items
-- **Minor Potion (20g)**: Instantly heals **30 HP**. Essential for long journeys into the Forsaken Dimension.
+## 2. Core Loop
 
-## 6. ⚖️ Rebalanced Combat
-- **Player Damage**: Base damage now starts at 5 and increases with every level.
-- **Enemy Health**: Bosses like the **Frost Giant** (180 HP) and **1x1x1x1** (200 HP) are now true tests of strength.
+- Move between rooms using numbered actions.
+- Explore biomes to find resources, bosses, and story triggers.
+- Buy gear and healing items in the shop.
+- Save progress happens automatically after actions and major transitions.
+- If online mode is active, you can also see nearby players, chat in the room, whisper directly, broadcast room events, form a party, invite nearby players, share a party heal, rally the party for combat buffs, raise a party guard, start a party quest, open the party quest log, enter party dungeon phases, follow your party leader, trade relics, and open the notifications inbox for pending interactions.
+- If the wise man is configured, you can ask him for clues in the Sage Hut. If he is not configured or the provider is unavailable, he falls back to a humorous offline reply.
+- The game also remembers the last action result and shows it again on the next screen so you do not miss important text.
 
----
+## 3. Combat
 
-## 🛠️ Master Checklist
-- [ ] Slang the **Cave Troll** for your first 50 XP.
-- [ ] Buy a **Minor Potion** before fighting the Zoo Beast.
-- [ ] Reach **Level 2** to survive the Frost Cliffs.
-- [ ] Reach **Level 4** to have a chance against the Dragon.
+- Enemies have visible health bars.
+- Your damage scales with level and gear.
+- Steel Sword and Forsaken Blade dramatically increase attack output.
+- Healing items restore HP up to your current maximum.
 
-*Your legend grows with every victory!*
+## 4. Progression
+
+- XP fills your level bar.
+- Leveling increases max health and base damage.
+- Stronger zones are gated by items or prior victories.
+- The Dragon at Mountain is the final test and expects you to be prepared.
+
+## 5. Biomes
+
+- Village: hub, shop, garden, and the path to the sage hut.
+- Forest: major crossroads and the hidden trail to the old ruins.
+- River: cave access, arctic bridge, and harbor route.
+- Desert: Sun Amulet path.
+- Arctic: Ice Crystal path.
+- Harbor: gateway to the lighthouse, moonwell, and tide caves.
+- Sage Hut: the wise man's home, the Moon Pearl offering point, and the Triptych Blessing turn-in.
+- Settings: reconfigure the wise man AI provider or key at any time.
+- Lighthouse: a clue-bearing lookout and a small reward stop.
+- Tide Caves: the Moon Pearl side quest and the guardian fight.
+- Old Ruins: hidden tablets that reveal one third of the Triptych quest.
+- Moonwell: a glowing hidden spring that grants another Triptych sign.
+- Observatory: a mountain lookout that completes the last Triptych sign.
+- Void / Binary Sea: late-game glitch route.
+- Party quest lines: Monster Hunt, Void Expedition, Frost Pact, and Sun Covenant each have multiple phases, distinct dungeon branches, shared rewards, quest-specific relic bonuses, and coordinated boss fights.
+- Party quest boards enter a short cooldown after completion so the same reward chain cannot be farmed immediately.
+
+## 6. Practical Advice
+
+- Buy a sword early.
+- Carry healing before entering dangerous zones.
+- Use the garden when you want a safer way to build up.
+- Do not rush the Dragon before level 4.
