@@ -31,12 +31,9 @@ A terminal RPG built in Go that blends classic text adventure mechanics with mod
 ## Quick Install
 
 ```bash
-# macOS / Linux (Homebrew)
+# macOS / Linux
 brew tap MaizerGomes/magicadvanture
 brew install magicadventure
-
-# Windows
-winget install MaizerGomes.magicadventre
 ```
 
 Or [download a binary](https://github.com/MaizerGomes/magicadvanture/releases) directly.
