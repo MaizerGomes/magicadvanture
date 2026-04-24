@@ -180,15 +180,34 @@ type RoomFeed struct {
 	refreshErr error
 }
 
+var defaultMongoURI = ""
+var defaultMongoDBName = "magicadventure_online"
+
+// GetDefaultMongoURI returns the build-time embedded MongoDB URI
+func GetDefaultMongoURI() string {
+	return defaultMongoURI
+}
+
+// GetDefaultMongoDBName returns the build-time embedded database name
+func GetDefaultMongoDBName() string {
+	if defaultMongoDBName == "" {
+		return "magicadventure_online"
+	}
+	return defaultMongoDBName
+}
+
 func InitOnline() (*OnlineService, error) {
 	uri := os.Getenv("MONGO_URI")
+	if uri == "" {
+		uri = GetDefaultMongoURI()
+	}
 	if strings.TrimSpace(uri) == "" {
 		return nil, nil
 	}
 
 	dbName := os.Getenv("MONGO_DB_NAME")
 	if strings.TrimSpace(dbName) == "" {
-		dbName = DefaultOnlineDBName
+		dbName = GetDefaultMongoDBName()
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

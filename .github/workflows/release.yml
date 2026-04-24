@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'
 
+env:
+  MONGO_URI: ${{ secrets.MONGO_URI }}
+  MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME }}
+
 permissions:
   contents: write
 
@@ -21,13 +25,13 @@ jobs:
 
       - name: Build for macOS ARM
         run: |
-          go build -o magicadventure-mac-arm .
+          go build -ldflags="-s -w -X magicadventure/game.defaultMongoURI=$MONGO_URI -X magicadventure/game.defaultMongoDBName=$MONGO_DB_NAME" -o magicadventure-mac-arm .
           shasum -a256 magicadventure-mac-arm > checksums.txt
           chmod +x magicadventure-mac-arm
 
       - name: Build for macOS Intel
         run: |
-          GOOS=darwin GOARCH=amd64 go build -o magicadventure-mac-64 .
+          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X magicadventure/game.defaultMongoURI=$MONGO_URI -X magicadventure/game.defaultMongoDBName=$MONGO_DB_NAME" -o magicadventure-mac-64 .
           shasum -a256 magicadventure-mac-64 >> checksums.txt
           chmod +x magicadventure-mac-64
 
@@ -53,12 +57,12 @@ jobs:
 
       - name: Build for Linux
         run: |
-          GOOS=linux GOARCH=amd64 go build -o magicadventure-linux64 .
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X magicadventure/game.defaultMongoURI=$MONGO_URI -X magicadventure/game.defaultMongoDBName=$MONGO_DB_NAME" -o magicadventure-linux64 .
           chmod +x magicadventure-linux64
 
       - name: Build for Windows
         run: |
-          GOOS=windows GOARCH=amd64 go build -o magicadventure-windows.exe .
+          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X magicadventure/game.defaultMongoURI=$MONGO_URI -X magicadventure/game.defaultMongoDBName=$MONGO_DB_NAME" -o magicadventure-windows.exe .
           chmod +x magicadventure-windows.exe
 
       - name: Upload Linux and Windows
