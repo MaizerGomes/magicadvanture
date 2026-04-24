@@ -13,13 +13,37 @@ fi
 
 echo "Deploying Magic Adventure v$VERSION to Homebrew..."
 
-# Get checksums
+# Verify release exists
+RELEASE_URL="https://github.com/MaizerGomes/magicadvanture/releases/tag/v$VERSION"
+if ! curl -sI "$RELEASE_URL" | head -1 | grep -q "200"; then
+    echo "Error: Release v$VERSION not found"
+    exit 1
+fi
+
+# Get checksums with redirect following
 echo "Getting checksums..."
-ARM_SHA=$(curl -sL "https://github.com/MaizerGomes/magicadvanture/releases/download/v$VERSION/magicadventure-mac-arm" | shasum -a256 | cut -d' ' -f1)
-INTEL_SHA=$(curl -sL "https://github.com/MaizerGomes/magicadvanture/releases/download/v$VERSION/magicadventure-mac-64" | shasum -a256 | cut -d' ' -f1)
+
+get_checksum() {
+    local url=$1
+    curl -sL --fail "$url" -o /tmp/magicadventure-temp || {
+        echo "Error downloading: $url"
+        exit 1
+    }
+    shasum -a256 /tmp/magicadventure-temp | cut -d' ' -f1
+    rm -f /tmp/magicadventure-temp
+}
+
+ARM_SHA=$(get_checksum "https://github.com/MaizerGomes/magicadvanture/releases/download/v$VERSION/magicadventure-mac-arm")
+INTEL_SHA=$(get_checksum "https://github.com/MaizerGomes/magicadvanture/releases/download/v$VERSION/magicadventure-mac-64")
 
 echo "ARM SHA: $ARM_SHA"
 echo "Intel SHA: $INTEL_SHA"
+
+# Verify checksums are valid (not empty, not error messages)
+if [ ${#ARM_SHA} -ne 64 ] || [ ${#INTEL_SHA} -ne 64 ]; then
+    echo "Error: Invalid checksum received"
+    exit 1
+fi
 
 # Update formula
 cat > /tmp/magicadventure.rb << EOF
@@ -46,6 +70,8 @@ class Magicadventure < Formula
   end
 end
 EOF
+
+echo "Formula created. Pushing to tap..."
 
 # Commit to tap repo
 cd /tmp
