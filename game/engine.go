@@ -559,13 +559,241 @@ func (e *Engine) buildOnlineSections(reader *bufio.Reader, nearby []OnlinePlayer
 	if e.Online == nil || !e.Online.Enabled() {
 		return nil
 	}
-	// Logic to build online sections like Chat, Party, etc.
-	return nil
+
+	var sections []MenuSection
+
+	// Chat section - send room messages
+	chatActions := []Action{
+		{
+			ID:          "chat",
+			Description: "Send room chat",
+			Result: func(gs *GameState) string {
+				fmt.Print("Type your message: ")
+				msg, _ := reader.ReadString('\n')
+				msg = strings.TrimSpace(msg)
+				if msg == "" {
+					return "Message cancelled."
+				}
+				if err := e.Online.PostRoomMessage(gs, msg); err != nil {
+					return fmt.Sprintf("Failed to send: %v", err)
+				}
+				return "Message sent!"
+			},
+		},
+		{
+			ID:          "emote",
+			Description: "Emote (action)",
+			Result: func(gs *GameState) string {
+				fmt.Print("Type your emote (e.g., /dance): ")
+				msg, _ := reader.ReadString('\n')
+				msg = strings.TrimSpace(msg)
+				if msg == "" {
+					return "Emote cancelled."
+				}
+				if err := e.Online.PostRoomMessage(gs, "*"+msg+"*"); err != nil {
+					return fmt.Sprintf("Failed: %v", err)
+				}
+				return "Emote sent!"
+			},
+		},
+	}
+	sections = append(sections, MenuSection{Title: "Chat", Actions: chatActions})
+
+	// Party section
+	partyActions := []Action{}
+	if party == nil {
+		partyActions = append(partyActions, Action{
+			ID:          "create_party",
+			Description: "Create a party",
+			Result: func(gs *GameState) string {
+				if party, err := e.Online.CreateParty(gs); err != nil {
+					return fmt.Sprintf("Failed to create party: %v", err)
+				}
+				gs.PartyID = party.ID
+				return fmt.Sprintf("Party created! Share this code: %s", party.Code)
+			},
+		})
+		partyActions = append(partyActions, Action{
+			ID:          "join_party",
+			Description: "Join a party",
+			Result: func(gs *GameState) string {
+				fmt.Print("Enter party code: ")
+				code, _ := reader.ReadString('\n')
+				code = strings.TrimSpace(strings.ToUpper(code))
+				if code == "" {
+					return "Join cancelled."
+				}
+				if party, err := e.Online.JoinParty(gs, code); err != nil {
+					return fmt.Sprintf("Failed to join: %v", err)
+				}
+				gs.PartyID = party.ID
+				return "You joined the party!"
+			},
+		})
+	} else {
+		partyActions = append(partyActions, Action{
+			ID:          "leave_party",
+			Description: "Leave party",
+			Result: func(gs *GameState) string {
+				if err := e.Online.LeaveParty(gs); err != nil {
+					return fmt.Sprintf("Failed: %v", err)
+				}
+				gs.PartyID = ""
+				gs.PartyQuestKey = ""
+				return "You left the party."
+			},
+		})
+		if party.LeaderID == gs.OnlineID {
+			partyActions = append(partyActions, Action{
+				ID:          "start_quest",
+				Description: "Start party quest",
+				Result: func(gs *GameState) string {
+					quests := []string{"monster-hunt", "void-expedition", "frost-pact", "sun-covenant"}
+					fmt.Println("Available quests:")
+					for i, q := range quests {
+						fmt.Printf("%d) %s\n", i+1, q)
+					}
+					fmt.Print("Select: ")
+					input, _ := reader.ReadString('\n')
+					idx, _ := strconv.Atoi(strings.TrimSpace(input))
+					if idx < 1 || idx > len(quests) {
+						return "Cancelled."
+					}
+					if err := e.Online.StartPartyQuest(gs, quests[idx-1]); err != nil {
+						return fmt.Sprintf("Failed: %v", err)
+					}
+					gs.PartyQuestKey = quests[idx-1]
+					return "Party quest started! Check your objectives."
+				},
+			})
+		}
+	}
+	sections = append(sections, MenuSection{Title: "Party", Actions: partyActions})
+
+	// Whispers section - send private messages
+	whisperActions := []Action{
+		{
+			ID:          "whisper",
+			Description: "Send whisper",
+			Result: func(gs *GameState) string {
+				fmt.Print("Enter player name: ")
+				target, _ := reader.ReadString('\n')
+				target = strings.TrimSpace(target)
+				if target == "" {
+					return "Cancelled."
+				}
+				fmt.Print("Type your message: ")
+				msg, _ := reader.ReadString('\n')
+				msg = strings.TrimSpace(msg)
+				if msg == "" {
+					return "Message cancelled."
+				}
+				if err := e.Online.SendWhisper(gs, target, msg); err != nil {
+					return fmt.Sprintf("Failed: %v", err)
+				}
+				return fmt.Sprintf("Whisper sent to %s!", target)
+			},
+		},
+	}
+	sections = append(sections, MenuSection{Title: "Whispers", Actions: whisperActions})
+
+	// Rooms section - see other rooms
+	roomNames := map[string]string{
+		"village":    "Village",
+		"forest":    "Forest",
+		"river":     "River",
+		"harbor":    "Harbor",
+		"desert":    "Desert",
+		"arctic":    "Arctic",
+		"binary_sea": "Binary Sea",
+	}
+	roomActions := []Action{}
+	for roomID, roomName := range roomNames {
+		roomID := roomID
+		roomName := roomName
+		roomActions = append(roomActions, Action{
+			ID:          "go_" + roomID,
+			Description: "Go to " + roomName,
+			Result: func(gs *GameState) string {
+				gs.CurrentRoomID = roomID
+				return fmt.Sprintf("You move to %s.", roomName)
+			},
+		})
+	}
+	sections = append(sections, MenuSection{Title: "Rooms", Actions: roomActions})
+
+	return sections
 }
 
 func (e *Engine) buildSupportSections(reader *bufio.Reader) []MenuSection {
-	// Settings, etc.
-	return nil
+	var sections []MenuSection
+
+	settingsActions := []Action{
+		{
+			ID:          "configure_wiseman",
+			Description: "Configure Wise Man AI",
+			Result: func(gs *GameState) string {
+				if e.WiseMan == nil {
+					return "Wise Man is not available."
+				}
+				providers := []string{"gemini", "cloudflare"}
+				fmt.Println("Available AI providers:")
+				for i, p := range providers {
+					fmt.Printf("%d) %s\n", i+1, p)
+				}
+				fmt.Print("Select provider: ")
+				input, _ := reader.ReadString('\n')
+				idx, _ := strconv.Atoi(strings.TrimSpace(input))
+				if idx < 1 || idx > len(providers) {
+					return "Cancelled."
+				}
+				provider := providers[idx-1]
+				fmt.Print("Enter API key (or press Enter to open browser): ")
+				key, _ := reader.ReadString('\n')
+				key = strings.TrimSpace(key)
+				if key == "" {
+					switch provider {
+					case "gemini":
+						fmt.Println("Opening Gemini setup...")
+					case "cloudflare":
+						fmt.Println("Opening Cloudflare setup...")
+					}
+					return "Please set WISEMAN_AI_KEY in your environment or .env file."
+				}
+				e.WiseMan.SetProvider(provider, key)
+				return fmt.Sprintf("Wise Man configured with %s!", provider)
+			},
+		},
+		{
+			ID:          "language",
+			Description: "Change language",
+			Result: func(gs *GameState) string {
+				languages := map[string]string{
+					"en": "English",
+					"pt": "Portuguese",
+					"es": "Spanish",
+					"fr": "French",
+					"de": "German",
+					"ja": "Japanese",
+				}
+				fmt.Println("Available languages:")
+				for code, name := range languages {
+					fmt.Printf("%s) %s\n", code, name)
+				}
+				fmt.Print("Select: ")
+				input, _ := reader.ReadString('\n')
+				input = strings.TrimSpace(input)
+				if _, ok := languages[input]; !ok {
+					return "Invalid language."
+				}
+				gs.Language = input
+				return fmt.Sprintf("Language set to %s!", languages[input])
+			},
+		},
+	}
+	sections = append(sections, MenuSection{Title: "Settings", Actions: settingsActions})
+
+	return sections
 }
 
 func (e *Engine) buildWiseManGuidanceSection(reader *bufio.Reader, sections []MenuSection) *MenuSection {
