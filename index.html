@@ -161,10 +161,29 @@
             height: 40px;
         }
 
+        .logo-text {
+            display: inline;
+        }
+
+        @media (max-width: 480px) {
+            .logo-text {
+                display: none;
+            }
+        }
+
         nav {
             display: flex;
             gap: 32px;
             align-items: center;
+        }
+
+        .desktop-nav {
+            display: flex;
+        }
+
+        .mobile-nav,
+        .mobile-cta {
+            display: none;
         }
 
         nav a {
@@ -812,8 +831,9 @@
                 font-size: 40px;
             }
 
-            .hero-text p {
-                margin: 0 auto 32px;
+            .hero-text p,
+            .hero-text .tagline {
+                margin: 0 auto 24px;
             }
 
             .hero-buttons {
@@ -824,31 +844,281 @@
                 justify-content: center;
             }
 
+            .inside-grid,
             .inside-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+        }
 
-            .locations-grid,
-            .quests-grid {
-                grid-template-columns: 1fr;
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            header {
+                padding: 12px 0;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .logo svg {
+                width: 32px;
+                height: 32px;
             }
 
             nav {
                 display: none;
             }
-        }
 
-        @media (max-width: 640px) {
-            .inside-grid {
-                grid-template-columns: 1fr;
+            .desktop-nav {
+                display: none;
+            }
+
+            .mobile-nav,
+            .mobile-cta {
+                display: flex;
+            }
+
+            /* Mobile nav menu */
+            .mobile-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: var(--bg-secondary);
+                border-top: 1px solid rgba(255, 215, 0, 0.1);
+                padding: 12px 16px;
+                justify-content: space-around;
+                z-index: 100;
+            }
+
+            .mobile-nav a {
+                color: var(--text-secondary);
+                text-decoration: none;
+                font-size: 12px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .mobile-nav a:hover {
+                color: var(--accent-gold);
+            }
+
+            .hero {
+                padding: 100px 0 120px;
+                min-height: auto;
+            }
+
+            .hero-content {
+                gap: 40px;
             }
 
             .hero-text h1 {
                 font-size: 32px;
             }
 
+            .hero-badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .hero-text p {
+                font-size: 15px;
+            }
+
+            .hero-text .tagline {
+                font-size: 17px;
+            }
+
             .hero-buttons {
                 flex-direction: column;
+                gap: 12px;
+            }
+
+            .hero-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero-feature {
+                font-size: 13px;
+            }
+
+            .hero-visual {
+                order: -1;
+            }
+
+            .terminal-preview {
+                font-size: 11px;
+                transform: scale(0.85);
+                transform-origin: top center;
+            }
+
+            .terminal-body {
+                padding: 12px;
+                line-height: 1.5;
+            }
+
+            .inside {
+                padding: 60px 0;
+            }
+
+            .inside-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .inside-card {
+                padding: 20px;
+            }
+
+            .inside-icon {
+                font-size: 32px;
+            }
+
+            .inside-card h3 {
+                font-size: 16px;
+            }
+
+            .inside-card p {
+                font-size: 13px;
+            }
+
+            .locations {
+                padding: 60px 0;
+            }
+
+            .locations-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .location-card {
+                padding: 16px;
+            }
+
+            .location-icon {
+                font-size: 24px;
+            }
+
+            .location-card h3 {
+                font-size: 16px;
+            }
+
+            .location-card p {
+                font-size: 13px;
+            }
+
+            .combat {
+                padding: 60px 0;
+            }
+
+            .combat-content {
+                gap: 40px;
+            }
+
+            .combat-preview {
+                font-size: 11px;
+                padding: 16px;
+            }
+
+            .quests {
+                padding: 60px 0;
+            }
+
+            .quests-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .quest-card {
+                padding: 20px;
+            }
+
+            .quest-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+
+            .quest-card h3 {
+                font-size: 18px;
+            }
+
+            .quest-rewards {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .install {
+                padding: 60px 0;
+            }
+
+            .install-content {
+                gap: 40px;
+            }
+
+            .install-code {
+                padding: 16px;
+            }
+
+            .install-code pre {
+                font-size: 12px;
+                line-height: 1.8;
+            }
+
+            .install-text h2 {
+                font-size: 28px;
+            }
+
+            .section-header {
+                margin-bottom: 40px;
+            }
+
+            .section-header h2 {
+                font-size: 28px;
+            }
+
+            .section-header p {
+                font-size: 15px;
+            }
+
+            footer {
+                padding: 40px 0 100px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 24px;
+                text-align: center;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-text h1 {
+                font-size: 28px;
+            }
+
+            .hero-text .tagline {
+                font-size: 15px;
+            }
+
+            .hero-badge {
+                font-size: 11px;
+            }
+
+            .feature-item {
+                width: 100%;
             }
         }
 
@@ -877,16 +1147,32 @@
                     <path d="M180 280 Q256 240 332 280 L300 380 Q256 420 212 380 Z" fill="#2d2d44" stroke="#ffd700" stroke-width="4"/>
                     <path d="M220 340 L256 320 L292 340 L256 380 Z" fill="#ffd700" opacity="0.8"/>
                 </svg>
-                Magic Adventure
+                <span class="logo-text">Magic Adventure</span>
             </a>
-            <nav>
+            <nav class="desktop-nav">
                 <a href="#inside">What's Inside</a>
                 <a href="#world">World</a>
                 <a href="#quests">Quests</a>
                 <a href="#install">Install</a>
             </nav>
+            <a href="#install" class="btn btn-primary mobile-cta">Get Started</a>
         </div>
     </header>
+
+    <nav class="mobile-nav">
+        <a href="#inside">
+            <span>📦</span>
+            <span>Features</span>
+        </a>
+        <a href="#world">
+            <span>🗺️</span>
+            <span>World</span>
+        </a>
+        <a href="#install">
+            <span>⬇️</span>
+            <span>Download</span>
+        </a>
+    </nav>
 
     <section class="hero">
         <div class="container">
