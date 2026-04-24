@@ -2,9 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Magic Adventure - Terminal RPG</title>
     <meta name="description" content="A terminal RPG with turn-based combat, multiplayer party quests, and AI assistance. Play solo offline or with friends.">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/svg+xml" href="logo.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -818,7 +821,7 @@
             margin: 0 auto;
         }
 
-        /* Responsive */
+        /* Responsive - Tablet */
         @media (max-width: 960px) {
             .hero-content,
             .combat-content,
@@ -828,60 +831,87 @@
             }
 
             .hero-text h1 {
-                font-size: 40px;
+                font-size: 38px;
+            }
+
+            .hero-badge {
+                margin-bottom: 16px;
             }
 
             .hero-text p,
             .hero-text .tagline {
-                margin: 0 auto 24px;
+                margin: 0 auto 20px;
             }
 
             .hero-buttons {
                 justify-content: center;
+                margin-bottom: 32px;
             }
 
             .hero-features {
                 justify-content: center;
+                gap: 12px;
             }
 
-            .inside-grid,
             .inside-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .locations-grid,
+            .quests-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav.desktop-nav {
+                display: flex;
+            }
         }
 
+        /* Responsive - Mobile */
         @media (max-width: 768px) {
+            * {
+                max-width: 100%;
+            }
+
+            html, body {
+                width: 100%;
+                overflow-x: hidden;
+            }
+
+            body {
+                font-size: 14px;
+                -webkit-text-size-adjust: 100%;
+            }
+
             .container {
+                width: 100%;
                 padding: 0 16px;
+                max-width: 100%;
             }
 
             header {
+                width: 100%;
                 padding: 12px 0;
             }
 
             .logo {
-                font-size: 18px;
+                font-size: 16px;
             }
 
             .logo svg {
-                width: 32px;
-                height: 32px;
+                width: 28px;
+                height: 28px;
             }
 
-            nav {
+            .logo-text {
                 display: none;
             }
 
-            .desktop-nav {
+            .desktop-nav,
+            .hero-features {
                 display: none;
             }
 
-            .mobile-nav,
-            .mobile-cta {
-                display: flex;
-            }
-
-            /* Mobile nav menu */
             .mobile-nav {
                 display: flex;
                 position: fixed;
@@ -889,247 +919,266 @@
                 left: 0;
                 right: 0;
                 background: var(--bg-secondary);
-                border-top: 1px solid rgba(255, 215, 0, 0.1);
-                padding: 12px 16px;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                padding: 8px 16px;
                 justify-content: space-around;
-                z-index: 100;
+                z-index: 1000;
             }
 
             .mobile-nav a {
                 color: var(--text-secondary);
                 text-decoration: none;
-                font-size: 12px;
+                font-size: 11px;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 4px;
+                gap: 2px;
             }
 
-            .mobile-nav a:hover {
-                color: var(--accent-gold);
+            .mobile-nav a span:first-child {
+                font-size: 18px;
+            }
+
+            .mobile-cta {
+                display: flex;
+                padding: 8px 16px;
+                font-size: 13px;
             }
 
             .hero {
-                padding: 100px 0 120px;
+                width: 100%;
+                padding: 60px 0 100px;
                 min-height: auto;
             }
 
             .hero-content {
-                gap: 40px;
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .hero-text {
+                text-align: center;
+                order: 1;
             }
 
             .hero-text h1 {
-                font-size: 32px;
+                font-size: 28px;
+                line-height: 1.2;
+                margin-bottom: 12px;
             }
 
             .hero-badge {
-                font-size: 12px;
-                padding: 6px 12px;
-            }
-
-            .hero-text p {
-                font-size: 15px;
+                font-size: 11px;
+                padding: 4px 10px;
+                margin-bottom: 12px;
             }
 
             .hero-text .tagline {
-                font-size: 17px;
+                font-size: 15px;
+                margin-bottom: 12px;
+            }
+
+            .hero-text p {
+                font-size: 14px;
+                line-height: 1.5;
+                margin-bottom: 20px;
             }
 
             .hero-buttons {
+                display: flex;
                 flex-direction: column;
-                gap: 12px;
+                gap: 10px;
+                width: 100%;
             }
 
             .hero-buttons .btn {
                 width: 100%;
+                padding: 12px 20px;
+                font-size: 14px;
                 justify-content: center;
             }
 
-            .hero-feature {
-                font-size: 13px;
-            }
-
             .hero-visual {
-                order: -1;
+                order: 0;
+                padding: 0 8px;
             }
 
             .terminal-preview {
+                width: 100%;
+                max-width: 100%;
+                font-size: 9px;
+                border-radius: 8px;
+                overflow-x: hidden;
+            }
+
+            .terminal-header {
+                padding: 10px 12px;
+            }
+
+            .terminal-dot {
+                width: 10px;
+                height: 10px;
+            }
+
+            .terminal-title {
                 font-size: 11px;
-                transform: scale(0.85);
-                transform-origin: top center;
             }
 
             .terminal-body {
                 padding: 12px;
-                line-height: 1.5;
+                line-height: 1.4;
             }
 
-            .inside {
-                padding: 60px 0;
+            /* Sections */
+            .section-header {
+                padding: 40px 0 32px;
             }
 
-            .inside-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
+            .section-header h2 {
+                font-size: 24px;
             }
 
-            .inside-card {
-                padding: 20px;
+            .section-header p {
+                font-size: 14px;
+            }
+
+            .inside, .locations, .combat, .quests, .install {
+                padding: 40px 0 80px;
+            }
+
+            .inside-grid, .locations-grid, .quests-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .inside-card, .location-card, .quest-card {
+                padding: 16px;
             }
 
             .inside-icon {
-                font-size: 32px;
+                font-size: 28px;
+                margin-bottom: 8px;
             }
 
-            .inside-card h3 {
-                font-size: 16px;
+            .inside-card h3, .location-card h3 {
+                font-size: 15px;
             }
 
-            .inside-card p {
-                font-size: 13px;
+            .inside-card p, .location-card p {
+                font-size: 12px;
             }
 
-            .locations {
-                padding: 60px 0;
+            .location-difficulty {
+                font-size: 10px;
+                padding: 2px 8px;
             }
 
-            .locations-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
+            .combat-content {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
             }
 
-            .location-card {
-                padding: 16px;
+            .combat-preview {
+                font-size: 11px;
+                padding: 12px;
             }
 
             .location-icon {
                 font-size: 24px;
             }
 
-            .location-card h3 {
-                font-size: 16px;
-            }
-
-            .location-card p {
-                font-size: 13px;
-            }
-
-            .combat {
-                padding: 60px 0;
-            }
-
-            .combat-content {
-                gap: 40px;
-            }
-
-            .combat-preview {
-                font-size: 11px;
-                padding: 16px;
-            }
-
-            .quests {
-                padding: 60px 0;
-            }
-
-            .quests-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .quest-card {
-                padding: 20px;
-            }
-
-            .quest-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-
-            .quest-card h3 {
-                font-size: 18px;
-            }
-
-            .quest-rewards {
-                flex-wrap: wrap;
+            .quest-header {
                 gap: 12px;
             }
 
-            .install {
-                padding: 60px 0;
+            .quest-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+
+            .quest-card h3 {
+                font-size: 16px;
+            }
+
+            .quest-card p {
+                font-size: 13px;
+                margin-bottom: 12px;
+            }
+
+            .quest-rewards {
+                gap: 12px;
+            }
+
+            .quest-reward {
+                font-size: 12px;
             }
 
             .install-content {
-                gap: 40px;
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
             }
 
             .install-code {
-                padding: 16px;
+                padding: 14px;
+                overflow-x: auto;
             }
 
             .install-code pre {
-                font-size: 12px;
-                line-height: 1.8;
+                font-size: 11px;
+                line-height: 1.6;
             }
 
             .install-text h2 {
-                font-size: 28px;
+                font-size: 24px;
             }
 
-            .section-header {
-                margin-bottom: 40px;
-            }
-
-            .section-header h2 {
-                font-size: 28px;
-            }
-
-            .section-header p {
-                font-size: 15px;
+            .install-text p {
+                font-size: 14px;
+                margin-bottom: 20px;
             }
 
             footer {
-                padding: 40px 0 100px;
+                padding: 32px 0 80px;
+                margin-bottom: 60px;
             }
 
             .footer-content {
                 flex-direction: column;
-                gap: 24px;
-                text-align: center;
+                gap: 16px;
+            }
+
+            .footer-logo svg {
+                width: 28px;
+                height: 28px;
             }
 
             .footer-links {
-                flex-wrap: wrap;
-                justify-content: center;
+                gap: 16px;
+            }
+
+            .footer-links a {
+                font-size: 13px;
+            }
+
+            .footer-copyright {
+                margin-top: 24px;
+                padding-top: 24px;
+                font-size: 12px;
             }
         }
 
-        @media (max-width: 480px) {
-            .hero-text h1 {
-                font-size: 28px;
-            }
-
-            .hero-text .tagline {
-                font-size: 15px;
-            }
-
-            .hero-badge {
-                font-size: 11px;
-            }
-
-            .feature-item {
-                width: 100%;
-            }
+        /* Fix grid display */
+        .mobile-nav {
+            display: none;
         }
 
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .floating {
-            animation: float 3s ease-in-out infinite;
+        .mobile-cta {
+            display: none;
         }
     </style>
 </head>
