@@ -51,18 +51,23 @@ class Magicadventure < Formula
   desc "A terminal RPG with slot-based saves, turn-based combat, and optional multiplayer"
   homepage "https://github.com/MaizerGomes/magicadvanture"
   version "$VERSION"
-  url "https://github.com/MaizerGomes/magicadvanture/releases/download/v$VERSION/magicadventure-mac-arm"
-  sha256 "$ARM_SHA"
-
   on_macos do
-    if Hardware::CPU.intel?
+    if Hardware::CPU.arm?
+      url "https://github.com/MaizerGomes/magicadvanture/releases/download/v$VERSION/magicadventure-mac-arm"
+      sha256 "$ARM_SHA"
+    else
       url "https://github.com/MaizerGomes/magicadvanture/releases/download/v$VERSION/magicadventure-mac-64"
       sha256 "$INTEL_SHA"
     end
   end
 
   def install
-    bin.install "magicadventure-mac-arm" => "magicadventure"
+    binary = Dir["magicadventure-*"]
+      .reject { |path| File.directory?(path) }
+      .first
+    raise "magicadventure binary not found in buildpath" unless binary
+
+    bin.install binary => "magicadventure"
   end
 
   test do
